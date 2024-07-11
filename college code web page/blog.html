@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="Viewport" cotent="with=device - width, intial-scale=1.0"> >
+    <title> University website Design </title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body>
+<section class="sub-header">
+<nav>
+  <a href="index.html"><img src="eduford_img/logo.png"></a>
+  <div class="nav-links" id="nav-links">
+    <i class="fa fa-times" onclick="hiddenMenu()"></i>
+    <ul>
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="course.html">COURSE</a></li>
+        <li><a href="blog.html">BLOG</a></li>
+        <li><a href="contact.html">CONTACTS</a></li>
+    </ul>
+  </div> 
+  <i class="fa fa-bars" onclick="showMenu()"></i>
+</nav>
+<h1>Our Certificate & Online Programs For 2021</h1>
+</section>
+
+<!---------blog page content-------->
+
+<section class="blog-content">
+    <div class="row">
+        <div class="blog-left">
+        <img src="eduford_img/certificate.jpg">
+        <h2>Our Certificate & Online Programs For 2021</h2>
+        <p>The newspapers are the storehouse of day-to-day happenings in the world.
+             They add to our knowledge not only about our own country but also about world affairs.
+              The newspapers also express their opinion about social and political problems through their editorials. 
+              They, mold the readers into their own way of thinking. That is why the newspaper is considered a power.
+               In a democracy, the press is a link between the government and the people.
+                It gives news as to what the government is doing. It reflects public opinion as well.
+                 It arouses national consciousness on important matters. It teaches the citizens their rights and responsibilities.
+                  Every newspaper does not, however, produce a healthy effect. A newspaper should be neutral. It should be fearless and just.</p>
+                  <br>
+                  <p>With advancements in the means of transport, traveling has become a means of education. 
+                    Education here does not mean bookish knowledge. 
+                    It means a complete understanding of the current ways in which our society and the world work.
+                     Bookish knowledge gives us theoretical details.
+                      Traveling gives us practical experience. 
+                      It is, therefore, quite essential that we move from place to place. 
+                      Students must travel now and then to know for themselves how the world is going.
+                       Businessmen have to travel to acquire knowledge of business techniques.
+                        Even doctors and lawyers must travel to improve the quality of their work. 
+                        People travel not only for the sake of pleasure alone. 
+                        They travel to gain experience which books fail to teach them</p>
+                        <br>
+                        <p>Character is the greatest quality of a person.
+                             It has been rightly said: “If wealth is lost, nothing is lost; if health is lost, something is lost; but if the character is lost, everything is lost.
+                             ” Character depends upon training. Training starts from the cradle and ends in the grave.
+                              Character means virtuous habits and qualities. A man of character lives for others.
+                               He shapes society. He builds a nation. He is a source of strength to others. 
+                               All great men found a place in history because of their character.
+                                Some people become great because of encouragement by great character.
+                                 It was the mother of Shivaji who was behind his greatness.
+                                  A man of character is like a light-house. He is a great source of inspiration for others.</p>
+                  
+         <div class="comment-box">
+
+            <h3>Leave a comment</h3>
+
+            <form class="comment-form">
+                <input type="text" placeholder="Enter Name"> 
+                <input type="email" placeholder="Enter email">
+                 <textarea rows="5" placeholder="Your Comment"></textarea>
+                 <button type="submit" class="hero-btn red-btn">Post Comment</button>
+            </form>
+         </div>                         
+
+
+    </div>
+    <div class="blog-right">
+       <h3>Post Categories</h3>
+       <div>
+        <span>Business Analytics</span>
+        <span>21</span>
+       </div> 
+       <div>
+        <span>Data Science</span>
+        <span>28</span>
+       </div> 
+       <div>
+        <span>Machine Learning</span>
+        <span>15</span>
+       </div> 
+       <div>
+        <span>Computer SCinence</span>
+        <span>34</span>
+       </div> 
+       <div>
+        <span>Auto Cad</span>
+        <span>42</span>
+       </div> 
+       <div>
+        <span>Journalism</span>
+        <span>22</span>
+       </div> 
+       <div>
+        <span>Commerce</span>
+        <span>30</span>
+       </div> 
+    </div>
+</div>
+</section>
+
+<!-------Footer------->
+
+<section class="footer">
+    <h4>About Us</h4>
+    <p>Lorem ipsum dolor sit amet,<br> consectertur adipiscing elit.</p>
+<div class="icons">
+    <i class="fa-brands fa-facebook"></i>
+    <i class="fa-brands fa-twitter"></i>
+    <i class="fa-brands fa-instagram"></i>
+    <i class="fa-brands fa-linkedin"></i>
+</div>
+<p>Made with  <i class="fa-regular fa-heart"></i> by Easy Tutorials</p>
+</section>
+
+
+<!------Javascript for Toggle Menu------>
+<script>
+
+    var navlinks = document.getElementById("navlinks")
+    function showMenu(){
+        navlinks.style.right = "0";
+    }
+    function hideMenu(){
+        navlinks.style.right = "-200px";
+    }
+     navlinks
+</script>     
+    </body>
+    </html>
