@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  containerRegistry: 'myacr.azurecr.io'
+  imageName: 'myapp'
+
+steps:
+# Step 1: Checkout Code
+- task: Checkout@v3
+  displayName: 'Checkout Application Code'
+
+# Step 2: Build Docker Image
+- script: |
+    docker build -t $(containerRegistry)/$(imageName):$(Build.BuildId) .
+  displayName: 'Build Docker Image'
+
+# Step 3: Push Docker Image to Azure Container Registry
+- script: |
+    echo $(DOCKER_PASSWORD) | docker login $(containerRegistry) -u $(DOCKER_USERNAME) --password-stdin
+    docker push $(containerRegistry)/$(imageName):$(Build.BuildId)
+  displayName: 'Push Docker Image'
+
+# Step 4: Deploy to Azure Web App (or AKS)
+- task: AzureWebAppContainer@1
+  inputs:
+    azureSubscription: 'AzureServiceConnection'
+    appName: 'mywebapp'
+    imageName: '$(containerRegistry)/$(imageName):$(Build.BuildId)'
+    resourceGroupName: 'myResourceGroup'
+  displayName: 'Deploy to Azure Web App'
