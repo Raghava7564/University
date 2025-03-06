@@ -12,10 +12,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-     - name: Azure Login (Manual)
-  run: |
-    az login --tenant ${{ secrets.AZURE_TENANT_ID }}
-    az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Azure Login (Manual)
+        run: |
+          az login --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Log in to ACR
         run: |
