@@ -26,3 +26,8 @@ variable "web_app_name" {
 variable "app_service_sku" {
   default = "P1v2"  # Premium for better performance
 }
+variable "image_tag" {
+  description = "Docker image tag from GitHub Actions"
+  type        = string
+}
+
