@@ -9,7 +9,7 @@ provider "azurerm" {
 # Create Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = "myResourceGroup"
-  location = "East US"
+  location = "West Europe"
 }
 
 # Create Azure Container Registry (ACR)
@@ -34,7 +34,7 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Linux"
-  sku_name            = "B1" # Use F1 for Free, B1 for Basic
+  sku_name            = "F1" # Use F1 for Free, B1 for Basic
 }
 
 # Create Web App
