@@ -1,7 +1,7 @@
 trigger: none  # Prevents triggering automatically
 resources:
   pipelines:
-    - pipeline: terraformPipeline
+  - pipeline: terraformPipeline
       source: 'terraform-pipeline'  # Name of the Terraform pipeline
       trigger: true
 trigger:
