@@ -1,0 +1,41 @@
+name: Deploy University App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: latest
+
+      - name: Terraform Init & Validate
+        run: |
+          terraform init
+          terraform validate
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Apply Terraform Configuration
+        run: |
+          terraform apply -auto-approve
+
+      - name: Upload Web Files
+        run: |
+          rsync -av --progress ./ /path/to/your/server --exclude='.git'
