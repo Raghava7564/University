@@ -9,24 +9,19 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+  - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Azure Login (Manual)
+  - name: Azure Login (Manual)
         run: |
           az login --tenant ${{ secrets.AZURE_TENANT_ID }}
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Install Terraform
+  - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: latest
-
-      - name: Terraform Init
+  - name: Terraform Init
         run: terraform init
-
-      - name: Terraform Plan
+  - name: Terraform Plan
         run: terraform plan
-
-      - name: Terraform Apply
+  - name: Terraform Apply
         run: terraform apply -auto-approve
