@@ -35,7 +35,6 @@ steps:
 # Step 4: Deploy to Azure Web App (or AKS)
 - task: AzureWebAppContainer@1
   inputs:
-    azureSubscription: 'AzureServiceConnection'
     appName: 'mywebapp'
     imageName: '$(containerRegistry)/$(imageName):$(Build.BuildId)'
     resourceGroupName: 'myResourceGroup'
