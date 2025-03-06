@@ -8,7 +8,9 @@ variable "location" {
 }
 
 variable "acr_name" {
-  default = "myacr"
+   description = "The name of the Azure Container Registry"
+  type        = string
+  default     = "myuniqueregistry"  # Change to a unique name
 }
 
 variable "acr_sku" {
