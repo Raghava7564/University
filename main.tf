@@ -39,23 +39,27 @@ resource "azurerm_service_plan" "asp" {
 
 # Create Web App
 resource "azurerm_linux_web_app" "webapp" {
-  name                = "myWebApp"
+  name                = "my-web-app"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   service_plan_id     = azurerm_service_plan.asp.id
 
+  # Enable Managed Identity for Web App
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
-    application_stack {
-      docker_image_name   = "${azurerm_container_registry.acr.login_server}/mywebapp:latest"
-      docker_registry_url = "https://${azurerm_container_registry.acr.login_server}"
-    }
+    always_on = true
+    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mywebapp:${var.image_tag}"
+
+    # Use Managed Identity for ACR Authentication
+    acr_use_managed_identity_credentials = true
+    acr_user_managed_identity_id         = null
   }
 
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
-    DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
-    DOCKER_REGISTRY_SERVER_USERNAME     = azurerm_container_registry.acr.admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD     = azurerm_container_registry.acr.admin_password
   }
 }
 
