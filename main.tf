@@ -14,12 +14,19 @@ resource "azurerm_resource_group" "rg" {
 
 # Create Azure Container Registry (ACR)
 resource "azurerm_container_registry" "acr" {
-  name                = "myacrregistry"
+  name                = "myacrregistry${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  sku                 = "Basic" # Options: Basic, Standard, Premium
+  sku                 = "Basic"
   admin_enabled       = true
 }
+
+resource "random_string" "suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 
 # Create App Service Plan
 resource "azurerm_service_plan" "asp" {
