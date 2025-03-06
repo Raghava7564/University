@@ -49,11 +49,13 @@ resource "azurerm_linux_web_app" "webapp" {
       docker_image_name   = "${azurerm_container_registry.acr.login_server}/mywebapp:latest"
       docker_registry_url = "https://${azurerm_container_registry.acr.login_server}"
     }
-    acr_use_managed_identity_credentials = true  # ✅ Enables automatic authentication
   }
 
-  identity {
-    type = "SystemAssigned"
+  app_settings = {
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+    DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
+    DOCKER_REGISTRY_SERVER_USERNAME     = azurerm_container_registry.acr.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD     = azurerm_container_registry.acr.admin_password
   }
 }
 
