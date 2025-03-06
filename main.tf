@@ -44,7 +44,6 @@ resource "azurerm_linux_web_app" "webapp" {
   location            = azurerm_resource_group.rg.location
   service_plan_id     = azurerm_service_plan.asp.id
 
-  # Enable Managed Identity for Web App
   identity {
     type = "SystemAssigned"
   }
@@ -53,7 +52,6 @@ resource "azurerm_linux_web_app" "webapp" {
     always_on = true
     linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mywebapp:${var.image_tag}"
 
-    # Use Managed Identity for ACR Authentication
     acr_use_managed_identity_credentials = true
     acr_user_managed_identity_id         = null
   }
@@ -62,6 +60,7 @@ resource "azurerm_linux_web_app" "webapp" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
   }
 }
+
 
 
 # Output ACR Login Server
