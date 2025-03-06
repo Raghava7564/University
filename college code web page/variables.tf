@@ -29,7 +29,8 @@ variable "app_service_sku" {
   default = "P1v2"  # Premium for better performance
 }
 variable "image_tag" {
-  description = "Docker image tag from GitHub Actions"
+  description = "Tag of the Docker image"
   type        = string
+  default     = "latest"  # Optional: Set a default value
 }
 
