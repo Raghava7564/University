@@ -1,41 +1,46 @@
-name: Deploy University App
+name: Build and Deploy to Azure Web App
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  setup:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to ACR
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/mywebapp:${{ github.sha }} .
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/mywebapp:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Terraform Setup
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: latest
 
-      - name: Terraform Init & Validate
+      - name: Terraform Init & Apply
         run: |
           terraform init
-          terraform validate
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Apply Terraform Configuration
-        run: |
           terraform apply -auto-approve
-
-      - name: Upload Web Files
-        run: |
-          rsync -av --progress ./ /path/to/your/server --exclude='.git'
+        env:
+          TF_VAR_image_tag: ${{ github.sha }}
