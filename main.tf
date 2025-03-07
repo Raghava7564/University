@@ -50,3 +50,8 @@ resource "azurerm_linux_web_app" "webapp" {
     DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
   }
 }
+
+# Output ACR Login Server
+output "acr_login_server" {
+  value = azurerm_container_registry.acr.login_server
+}
