@@ -36,7 +36,7 @@ jobs:
           ACR_NAME=$(terraform output -raw acr_name)
           echo "Waiting for ACR: $ACR_NAME to be available..."
           for i in {1..10}; do
-            if az acr show --name "$ACR_NAME" --query "id" -o tsv &>/dev/null; then
+            if az acr show --name "$ACR_NAME" &>/dev/null; then
               echo "ACR is available!"
               exit 0
             fi
@@ -48,8 +48,7 @@ jobs:
 
       - name: Get ACR Login Server
         id: get_acr
-        run: |
-          echo "ACR_SERVER=$(terraform output -raw acr_login_server)" >> $GITHUB_ENV
+        run: echo "ACR_SERVER=$(terraform output -raw acr_login_server)" >> $GITHUB_ENV
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -66,7 +65,7 @@ jobs:
       - name: Ensure ACR is Reachable
         run: |
           echo "Checking if ACR is available..."
-          az acr show --name "${{ env.ACR_SERVER }}" --query "id" -o tsv || (echo "ACR not found!" && exit 1)
+          az acr show --name "${{ env.ACR_SERVER }}" || (echo "ACR not found!" && exit 1)
 
       - name: Log in to ACR
         run: |
