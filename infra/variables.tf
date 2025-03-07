@@ -38,7 +38,7 @@ variable "web_app_name" {
 variable "app_service_sku" {
   description = "SKU tier for the App Service Plan"
   type        = string
-  default     = "P1v2"
+  default     = "B1"
 }
 
 variable "image_tag" {
