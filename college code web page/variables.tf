@@ -8,7 +8,7 @@ variable "location" {
 }
 
 variable "acr_name" {
-   description = "The name of the Azure Container Registry"
+  description = "The name of the Azure Container Registry"
   type        = string
   default     = "myuniqueregistry"  # Change to a unique name
 }
@@ -28,9 +28,9 @@ variable "web_app_name" {
 variable "app_service_sku" {
   default = "P1v2"  # Premium for better performance
 }
+
 variable "image_tag" {
   description = "Tag of the Docker image"
   type        = string
   default     = "latest"  # Optional: Set a default value
 }
-
