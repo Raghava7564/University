@@ -39,27 +39,21 @@ resource "azurerm_service_plan" "asp" {
 
 # Create Web App
 resource "azurerm_linux_web_app" "webapp" {
-  name                = "my-web-app"
-  resource_group_name = azurerm_resource_group.rg.name
+  name                = var.web_app_name
   location            = azurerm_resource_group.rg.location
-  service_plan_id     = azurerm_service_plan.asp.id
-
-  identity {
-    type = "SystemAssigned"
-  }
+  resource_group_name = azurerm_resource_group.rg.name
+  service_plan_id     = azurerm_service_plan.appserviceplan.id
 
   site_config {
-    always_on = true
     linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mywebapp:${var.image_tag}"
-
-    acr_use_managed_identity_credentials = true
-    acr_user_managed_identity_id         = null
   }
 
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+    DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
   }
 }
+
 
 
 
