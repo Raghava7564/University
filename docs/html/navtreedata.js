@@ -24,9 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "UploadedProject", "index.html", [
-    [ "Auto-generated Documentation", "index.html", null ]
-  ] ]
+  [ "UploadedProject", "index.html", ]
 ];
 
 var NAVTREEINDEX =
