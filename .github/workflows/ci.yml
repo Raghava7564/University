@@ -33,6 +33,10 @@ jobs:
         working-directory: infra
         run: terraform fmt -check -diff
 
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init
+
       - name: Terraform Validate
         working-directory: infra
         run: terraform validate
@@ -152,6 +156,9 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -165,9 +172,10 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+          category: 'trivy'
 
       - name: Run SAST with Semgrep
         uses: returntocorp/semgrep-action@v1
@@ -222,11 +230,12 @@ jobs:
             --enableExperimental
 
       - name: Upload Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dependency-check-report
           path: reports/
+          retention-days: 30
 
   summary:
     name: CI Summary
@@ -243,10 +252,10 @@ jobs:
              [ "${{ needs.security-scan.result }}" = "failure" ] || \
              [ "${{ needs.code-quality.result }}" = "failure" ] || \
              [ "${{ needs.dependency-check.result }}" = "failure" ]; then
-            echo "❌ CI Pipeline Failed"
+            echo " CI Pipeline Failed"
             exit 1
           else
-            echo "✅ CI Pipeline Passed"
+            echo " CI Pipeline Passed"
           fi
 
       - name: Create Summary
@@ -262,3 +271,142 @@ jobs:
           echo "| Security Scan | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Code Quality | ${{ needs.code-quality.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dependency Check | ${{ needs.dependency-check.result }} |" >> $GITHUB_STEP_SUMMARY
+
+  publish-artifacts:
+    name: Build and Publish Artifacts
+    runs-on: ubuntu-latest
+    needs: [lint-terraform, lint-docker, build-and-test, build-docker, security-scan, code-quality, dependency-check]
+    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Application Bundle
+        run: |
+          echo "Creating application artifact bundle..."
+          mkdir -p build-artifacts
+          
+          # Copy web app files
+          cp -r web-app build-artifacts/
+          
+          # Copy terraform configurations
+          cp -r infra build-artifacts/
+          
+          # Create manifest file
+          cat > build-artifacts/MANIFEST.md << EOF
+          # Application Build Manifest
+          
+          **Build Date:** $(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          **Git Commit:** ${{ github.sha }}
+          **Git Branch:** ${{ github.ref_name }}
+          **Build Number:** ${{ github.run_number }}
+          **Workflow:** ${{ github.workflow }}
+          
+          ## Contents
+          - web-app/: Web application source code
+          - infra/: Terraform infrastructure configuration
+          - Dockerfile: Container image definition
+          
+          ## Build Tools Used
+          - Terraform
+          - Docker
+          - NGINX
+          
+          **Repository:** ${{ github.repository }}
+          EOF
+
+      - name: Create Distribution Archive
+        run: |
+          cd build-artifacts
+          tar -czf ../university-app-${{ github.run_number }}.tar.gz .
+          zip -r ../university-app-${{ github.run_number }}.zip .
+          cd ..
+          
+          echo "Archive created successfully"
+          ls -lh university-app-*.tar.gz university-app-*.zip
+
+      - name: Generate Build Report
+        run: |
+          cat > build-report.txt << EOF
+          =========================================
+          UNIVERSITY APPLICATION BUILD REPORT
+          =========================================
+          
+          Build Information:
+          - Build ID: ${{ github.run_id }}
+          - Build Number: ${{ github.run_number }}
+          - Commit SHA: $S{{ github.sha }}
+          - Branch: ${{ github.ref_name }}
+          - Triggering Actor: ${{ github.actor }}
+          - Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          Artifacts Generated:
+          - university-app-${{ github.run_number }}.tar.gz
+          - university-app-${{ github.run_number }}.zip
+          
+          Pipeline Status:
+          - Terraform Lint: S PASSED
+          - Docker Lint:  PASSED
+          - Build & Test:  PASSED
+          - Docker Build:  PASSED
+          - Security Scan:  PASSED
+          - Code Quality:  PASSED
+          - Dependency Check:  PASSED
+          
+          Download Artifacts:
+          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          
+          =========================================
+          EOF
+          
+          cat build-report.txt
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-build-${{ github.run_number }}
+          path: |
+            university-app-*.tar.gz
+            university-app-*.zip
+            build-report.txt
+          retention-days: 90
+
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            university-app-*.tar.gz
+            university-app-*.zip
+            build-report.txt
+          draft: false
+          prerelease: false
+          body: |
+            ## Release Build
+            
+            **Version:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            
+            ### Artifacts Included:
+            - Complete web application source
+            - Terraform infrastructure code
+            - Docker configuration
+            - Build manifest and report
+            
+            ### Build Pipeline Status:
+             All checks passed
+            
+            **Release Date:** ${{ github.event.repository.updated_at }}
+
+      - name: Upload to Build Repository
+        run: |
+          echo "Artifacts published successfully"
+          echo "Build artifacts are available in GitHub Actions"
+          echo "Archive formats: tar.gz, zip"
+          echo "Retention period: 90 days"
