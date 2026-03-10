@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-=======
 # Configure the Azure Provider
 provider "azurerm" {
   features {}
   subscription_id = "d9f05757-f3b3-4460-aa6c-da6ed3898008"
 }
-
->>>>>>> 12eb18f9c70a4b1353b3a48a48ae0b07d7a6f265
 # Create Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name # ✅ Using variable
